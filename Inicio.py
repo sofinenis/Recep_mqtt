@@ -48,29 +48,46 @@ def get_mqtt_message(broker, port, topic, client_id):
     except Exception as e:
         return {"error": str(e)}
 
+# Sidebar - Configuración
+with st.sidebar:
+    st.subheader('⚙️ Configuración de Conexión')
+    
+    broker = st.text_input('Broker MQTT', value='broker.mqttdashboard.com', 
+                           help='Dirección del broker MQTT')
+    
+    port = st.number_input('Puerto', value=1883, min_value=1, max_value=65535,
+                           help='Puerto del broker (generalmente 1883)')
+    
+    topic = st.text_input('Tópico', value='sensor_st',
+                          help='Tópico MQTT a suscribirse')
+    
+    client_id = st.text_input('ID del Cliente', value='streamlit_client',
+                              help='Identificador único para este cliente')
+
 # Título
 st.title('📡 Lector de Sensor MQTT')
-st.write('Configura la conexión y obtén datos de tu sensor')
 
-# Formulario de configuración
-st.subheader('Configuración de Conexión')
+# Información al inicio
+with st.expander('ℹ️ Información', expanded=False):
+    st.markdown("""
+    ### Cómo usar esta aplicación:
+    
+    1. **Broker MQTT**: Ingresa la dirección del servidor MQTT en el sidebar
+    2. **Puerto**: Generalmente es 1883 para conexiones no seguras
+    3. **Tópico**: El canal al que deseas suscribirte
+    4. **ID del Cliente**: Un identificador único para esta conexión
+    5. Haz clic en **Obtener Datos** para recibir el mensaje más reciente
+    
+    ### Brokers públicos para pruebas:
+    - broker.mqttdashboard.com
+    - test.mosquitto.org
+    - broker.hivemq.com
+    """)
 
-broker = st.text_input('Broker MQTT', value='broker.mqttdashboard.com', 
-                       help='Dirección del broker MQTT')
-
-port = st.number_input('Puerto', value=1883, min_value=1, max_value=65535,
-                       help='Puerto del broker (generalmente 1883)')
-
-topic = st.text_input('Tópico', value='sensor_st',
-                      help='Tópico MQTT a suscribirse')
-
-client_id = st.text_input('ID del Cliente', value='streamlit_client',
-                          help='Identificador único para este cliente')
-
-# Botón para obtener datos
 st.divider()
 
-if st.button('🔄 Obtener Datos del Sensor', type='primary', use_container_width=True):
+# Botón para obtener datos
+if st.button('🔄 Obtener Datos del Sensor', use_container_width=True):
     with st.spinner('Conectando al broker y esperando datos...'):
         sensor_data = get_mqtt_message(broker, int(port), topic, client_id)
         st.session_state.sensor_data = sensor_data
@@ -102,20 +119,3 @@ if st.session_state.sensor_data:
         else:
             # Si no es diccionario, mostrar como texto
             st.code(data)
-
-# Información adicional
-with st.expander('ℹ️ Información'):
-    st.markdown("""
-    ### Cómo usar esta aplicación:
-    
-    1. **Broker MQTT**: Ingresa la dirección del servidor MQTT
-    2. **Puerto**: Generalmente es 1883 para conexiones no seguras
-    3. **Tópico**: El canal al que deseas suscribirte
-    4. **ID del Cliente**: Un identificador único para esta conexión
-    5. Haz clic en **Obtener Datos** para recibir el mensaje más reciente
-    
-    ### Brokers públicos para pruebas:
-    - broker.mqttdashboard.com
-    - test.mosquitto.org
-    - broker.hivemq.com
-    """)
