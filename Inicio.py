@@ -58,7 +58,7 @@ with st.sidebar:
     port = st.number_input('Puerto', value=1883, min_value=1, max_value=65535,
                            help='Puerto del broker (generalmente 1883)')
     
-    topic = st.text_input('Tópico', value='sensor_st',
+    topic = st.text_input('Tópico', value='sensor/THP2',
                           help='Tópico MQTT a suscribirse')
     
     client_id = st.text_input('ID del Cliente', value='streamlit_client',
